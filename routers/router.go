@@ -1,3 +1,11 @@
+// @APIVersion 1.0.0
+// @Title Expense Tracker API
+// @Description A REST API for user authentication and expense tracking using Beego and CSV storage.
+// @Contact Rangon Roy Utsab
+// @ContactEmail rangonroy@outlook.com
+// @License MIT
+// @LicenseUrl https://opensource.org/licenses/MIT
+
 package routers
 
 import (
