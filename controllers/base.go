@@ -16,6 +16,12 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+// BasicResponse represents a simple API response without data.
+type BasicResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
 // BaseController provides shared response helpers for all controllers.
 type BaseController struct {
 	beego.Controller

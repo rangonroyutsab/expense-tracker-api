@@ -3,6 +3,45 @@ info: {}
 basePath: /api/v1
 paths: {}
 definitions:
-  Response:
+  controller.BasicResponse:
+    title: BasicResponse
+    type: object
+  controllers.BasicResponse:
+    title: BasicResponse
+    type: object
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+  controllers.LoginRequest:
+    title: LoginRequest
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  controllers.RegisterRequest:
+    title: RegisterRequest
+    type: object
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+  controllers.Response:
     title: Response
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/controllers.interface'
+      message:
+        type: string
+      success:
+        type: boolean
+  controllers.interface:
+    title: interface
     type: object
