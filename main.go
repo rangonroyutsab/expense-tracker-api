@@ -30,6 +30,11 @@ func main() {
 
 	models.InitPaths()
 
+	if beego.BConfig.RunMode == "dev" {
+		beego.BConfig.WebConfig.DirectoryIndex = true
+		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	}
+
 	logs.Info("starting expense-tracker-api")
 	beego.Run()
 }
