@@ -1,0 +1,8 @@
+swagger: "2.0"
+info: {}
+basePath: /api/v1
+paths: {}
+definitions:
+  Response:
+    title: Response
+    type: object

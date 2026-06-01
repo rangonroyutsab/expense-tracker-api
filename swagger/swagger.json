@@ -1,0 +1,29 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "basePath": "/api/v1",
+    "paths": null,
+    "definitions": {
+        "controllers.Response": {
+            "title": "Response",
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/controllers.interface"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "controllers.interface": {
+            "title": "interface",
+            "type": "object"
+        }
+    }
+}
