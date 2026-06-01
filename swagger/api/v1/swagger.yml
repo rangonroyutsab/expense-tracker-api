@@ -3,9 +3,6 @@ info: {}
 basePath: /api/v1
 paths: {}
 definitions:
-  controller.BasicResponse:
-    title: BasicResponse
-    type: object
   controllers.BasicResponse:
     title: BasicResponse
     type: object
