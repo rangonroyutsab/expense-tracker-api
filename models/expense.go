@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -312,4 +313,131 @@ func writeAllExpenses(expenses []Expense) error {
 
 	writer.Flush()
 	return writer.Error()
+}
+
+// CategorySummary represents total spending for a category.
+type CategorySummary struct {
+	Category string  `json:"category"`
+	Total    float64 `json:"total"`
+	Count    int     `json:"count"`
+}
+
+// ExpenseSummary represents expense summary response data.
+type ExpenseSummary struct {
+	DateFrom    string            `json:"date_from,omitempty"`
+	DateTo      string            `json:"date_to,omitempty"`
+	TotalAmount float64           `json:"total_amount"`
+	TotalCount  int               `json:"total_count"`
+	ByCategory  []CategorySummary `json:"by_category"`
+}
+
+// FilterExpensesByDate filters expenses by optional date range.
+func FilterExpensesByDate(expenses []Expense, dateFrom, dateTo string) ([]Expense, error) {
+	if dateFrom != "" {
+		if _, err := time.Parse("2006-01-02", dateFrom); err != nil {
+			return nil, errors.New("date_from must be valid YYYY-MM-DD")
+		}
+	}
+
+	if dateTo != "" {
+		if _, err := time.Parse("2006-01-02", dateTo); err != nil {
+			return nil, errors.New("date_to must be valid YYYY-MM-DD")
+		}
+	}
+
+	filteredExpenses := make([]Expense, 0)
+
+	for _, expense := range expenses {
+		if _, err := time.Parse("2006-01-02", expense.ExpenseDate); err != nil {
+			return nil, errors.New("expense_date must be valid YYYY-MM-DD")
+		}
+
+		if dateFrom != "" && expense.ExpenseDate < dateFrom {
+			continue
+		}
+
+		if dateTo != "" && expense.ExpenseDate > dateTo {
+			continue
+		}
+
+		filteredExpenses = append(filteredExpenses, expense)
+	}
+
+	return filteredExpenses, nil
+}
+
+// SortExpenses sorts expenses by amount or expense_date.
+func SortExpenses(expenses []Expense, sortBy, sortOrder string) error {
+	if sortOrder != "" && sortBy == "" {
+		return errors.New("sort_by is required when sort_order is provided")
+	}
+
+	if sortBy == "" {
+		return nil
+	}
+
+	if sortBy != "amount" && sortBy != "expense_date" {
+		return errors.New("sort_by must be amount or expense_date")
+	}
+
+	if sortOrder == "" {
+		sortOrder = "desc"
+	}
+
+	if sortOrder != "asc" && sortOrder != "desc" {
+		return errors.New("sort_order must be asc or desc")
+	}
+
+	sort.Slice(expenses, func(i, j int) bool {
+		if sortBy == "amount" {
+			if sortOrder == "asc" {
+				return expenses[i].Amount < expenses[j].Amount
+			}
+
+			return expenses[i].Amount > expenses[j].Amount
+		}
+
+		if sortOrder == "asc" {
+			return expenses[i].ExpenseDate < expenses[j].ExpenseDate
+		}
+
+		return expenses[i].ExpenseDate > expenses[j].ExpenseDate
+	})
+
+	return nil
+}
+
+// BuildExpenseSummary builds a spending summary from expenses.
+func BuildExpenseSummary(expenses []Expense, dateFrom, dateTo string) ExpenseSummary {
+	summary := ExpenseSummary{
+		DateFrom:   dateFrom,
+		DateTo:     dateTo,
+		ByCategory: make([]CategorySummary, 0),
+	}
+
+	categoryMap := make(map[string]*CategorySummary)
+
+	for _, expense := range expenses {
+		summary.TotalAmount += expense.Amount
+		summary.TotalCount++
+
+		if _, exists := categoryMap[expense.Category]; !exists {
+			categoryMap[expense.Category] = &CategorySummary{
+				Category: expense.Category,
+			}
+		}
+
+		categoryMap[expense.Category].Total += expense.Amount
+		categoryMap[expense.Category].Count++
+	}
+
+	for _, categorySummary := range categoryMap {
+		summary.ByCategory = append(summary.ByCategory, *categorySummary)
+	}
+
+	sort.Slice(summary.ByCategory, func(i, j int) bool {
+		return summary.ByCategory[i].Category < summary.ByCategory[j].Category
+	})
+
+	return summary
 }

@@ -16,6 +16,7 @@ func init() {
 		),
 
 		beego.NSRouter("/expenses", &controllers.ExpenseController{}, "post:CreateExpense;get:ListExpenses"),
+		beego.NSRouter("/expenses/summary", &controllers.ExpenseController{}, "get:Summary"),
 		beego.NSRouter("/expenses/:id", &controllers.ExpenseController{}, "get:GetExpense;put:UpdateExpense;delete:DeleteExpense"),
 	)
 

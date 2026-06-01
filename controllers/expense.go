@@ -66,9 +66,14 @@ func (c *ExpenseController) CreateExpense() {
 
 // ListExpenses returns all expenses for the authenticated user.
 // @Title List Expenses
-// @Description List all expenses for the authenticated user.
+// @Description List all expenses for the authenticated user with optional date filtering and sorting.
 // @Param X-User-ID header int true "Authenticated user ID"
+// @Param date_from query string false "Filter expenses on or after this date. Format: YYYY-MM-DD"
+// @Param date_to query string false "Filter expenses on or before this date. Format: YYYY-MM-DD"
+// @Param sort_by query string false "Sort field: amount or expense_date"
+// @Param sort_order query string false "Sort order: asc or desc"
 // @Success 200 {object} controllers.Response
+// @Failure 400 {object} controllers.BasicResponse
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
 // @router /expenses [get]
@@ -78,11 +83,27 @@ func (c *ExpenseController) ListExpenses() {
 		return
 	}
 
+	dateFrom := strings.TrimSpace(c.GetString("date_from"))
+	dateTo := strings.TrimSpace(c.GetString("date_to"))
+	sortBy := strings.TrimSpace(c.GetString("sort_by"))
+	sortOrder := strings.TrimSpace(c.GetString("sort_order"))
+
 	expenses, err := models.GetExpensesByUserID(userID)
 	if err != nil {
 		logs.Error("failed to list expenses: %v", err)
 		utils.CaptureError(err)
 		c.Error(500, "Internal server error")
+		return
+	}
+
+	expenses, err = models.FilterExpensesByDate(expenses, dateFrom, dateTo)
+	if err != nil {
+		c.Error(400, err.Error())
+		return
+	}
+
+	if err := models.SortExpenses(expenses, sortBy, sortOrder); err != nil {
+		c.Error(400, err.Error())
 		return
 	}
 
@@ -217,6 +238,52 @@ func (c *ExpenseController) DeleteExpense() {
 	}
 
 	c.Success(200, "Expense deleted successfully", nil)
+}
+
+// Summary returns spending summary for the authenticated user.
+// @Title Expense Summary
+// @Description Generate a full or date-range spending summary.
+// @Param X-User-ID header int true "Authenticated user ID"
+// @Param date_from query string false "Summary start date. Format: YYYY-MM-DD"
+// @Param date_to query string false "Summary end date. Format: YYYY-MM-DD"
+// @Success 200 {object} controllers.Response
+// @Failure 400 {object} controllers.BasicResponse
+// @Failure 401 {object} controllers.BasicResponse
+// @Failure 500 {object} controllers.BasicResponse
+// @router /expenses/summary [get]
+func (c *ExpenseController) Summary() {
+	userID, err := c.GetCurrentUserID()
+	if err != nil {
+		return
+	}
+
+	dateFrom := strings.TrimSpace(c.GetString("date_from"))
+	dateTo := strings.TrimSpace(c.GetString("date_to"))
+
+	if (dateFrom == "" && dateTo != "") || (dateFrom != "" && dateTo == "") {
+		c.Error(400, "Both date_from and date_to are required for date range summary")
+		return
+	}
+
+	expenses, err := models.GetExpensesByUserID(userID)
+	if err != nil {
+		logs.Error("failed to load expenses for summary: %v", err)
+		utils.CaptureError(err)
+		c.Error(500, "Internal server error")
+		return
+	}
+
+	if dateFrom != "" && dateTo != "" {
+		expenses, err = models.FilterExpensesByDate(expenses, dateFrom, dateTo)
+		if err != nil {
+			c.Error(400, err.Error())
+			return
+		}
+	}
+
+	summary := models.BuildExpenseSummary(expenses, dateFrom, dateTo)
+
+	c.Success(200, "Summary generated", summary)
 }
 
 func validateExpenseInput(title string, amount float64, category string, expenseDate string) error {
