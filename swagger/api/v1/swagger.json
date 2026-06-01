@@ -22,6 +22,28 @@
                 }
             }
         },
+        "controllers.CreateExpenseRequest": {
+            "title": "CreateExpenseRequest",
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "expense_date": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.LoginRequest": {
             "title": "LoginRequest",
             "type": "object",
@@ -61,6 +83,28 @@
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "controllers.UpdateExpenseRequest": {
+            "title": "UpdateExpenseRequest",
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "expense_date": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },

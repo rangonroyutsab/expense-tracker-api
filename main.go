@@ -30,6 +30,20 @@ func main() {
 
 	models.InitPaths()
 
+	models.InitPaths()
+
+	if err := models.EnsureUserFile(); err != nil {
+		logs.Error("failed to initialize users CSV: %v", err)
+		utils.CaptureError(err)
+		return
+	}
+
+	if err := models.EnsureExpenseFile(); err != nil {
+		logs.Error("failed to initialize expenses CSV: %v", err)
+		utils.CaptureError(err)
+		return
+	}
+
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
