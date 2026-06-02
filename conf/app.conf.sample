@@ -7,5 +7,3 @@ EnableDocs = true
 
 users_csv = data/users.csv
 expenses_csv = data/expenses.csv
-
-sentry_dsn = your_sentry_dsn_here

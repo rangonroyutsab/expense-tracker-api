@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"expense-tracker-api/models"
-	"expense-tracker-api/utils"
 
 	"github.com/beego/beego/v2/core/logs"
 )
@@ -75,7 +74,6 @@ func (c *AuthController) Register() {
 
 	if err := models.CreateUser(user); err != nil {
 		logs.Error("failed to create user: %v", err)
-		utils.CaptureError(err)
 		c.Error(500, "Internal server error")
 		return
 	}

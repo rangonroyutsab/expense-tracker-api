@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"expense-tracker-api/models"
-	"expense-tracker-api/utils"
 
 	"github.com/beego/beego/v2/core/logs"
 )
@@ -56,7 +55,7 @@ func (c *ExpenseController) CreateExpense() {
 
 	if err := models.CreateExpense(expense); err != nil {
 		logs.Error("failed to create expense: %v", err)
-		utils.CaptureError(err)
+
 		c.Error(500, "Internal server error")
 		return
 	}
@@ -91,7 +90,7 @@ func (c *ExpenseController) ListExpenses() {
 	expenses, err := models.GetExpensesByUserID(userID)
 	if err != nil {
 		logs.Error("failed to list expenses: %v", err)
-		utils.CaptureError(err)
+
 		c.Error(500, "Internal server error")
 		return
 	}
@@ -194,7 +193,7 @@ func (c *ExpenseController) UpdateExpense() {
 		}
 
 		logs.Error("failed to update expense: %v", err)
-		utils.CaptureError(err)
+
 		c.Error(500, "Internal server error")
 		return
 	}
@@ -232,7 +231,7 @@ func (c *ExpenseController) DeleteExpense() {
 		}
 
 		logs.Error("failed to delete expense: %v", err)
-		utils.CaptureError(err)
+
 		c.Error(500, "Internal server error")
 		return
 	}
@@ -268,7 +267,7 @@ func (c *ExpenseController) Summary() {
 	expenses, err := models.GetExpensesByUserID(userID)
 	if err != nil {
 		logs.Error("failed to load expenses for summary: %v", err)
-		utils.CaptureError(err)
+
 		c.Error(500, "Internal server error")
 		return
 	}
