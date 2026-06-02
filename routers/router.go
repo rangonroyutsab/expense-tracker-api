@@ -22,3 +22,14 @@ func init() {
 
 	beego.AddNamespace(ns)
 }
+
+func swaggerDocsNamespace() {
+	// bee generate docs only attaches controller annotations from NSInclude.
+	_ = beego.NewNamespace("/api/v1",
+		beego.NSInclude(
+			&controllers.HealthController{},
+			&controllers.AuthController{},
+			&controllers.ExpenseController{},
+		),
+	)
+}

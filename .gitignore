@@ -2,4 +2,5 @@ expense-tracker-api
 conf/app.conf
 data/*.csv
 coverage.out
+swagger
 .DS_Store
