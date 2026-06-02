@@ -222,3 +222,65 @@ func TestBuildExpenseSummary(t *testing.T) {
 		t.Fatalf("len(ByCategory) = %d, want 2", len(summary.ByCategory))
 	}
 }
+
+func TestGetExpensesMalformedCSV(t *testing.T) {
+	tempDir := t.TempDir()
+	ExpensesCSVPath = filepath.Join(tempDir, "expenses.csv")
+
+	content := []byte("id,user_id,title,amount,category,note,expense_date,created_at\n1,1,Lunch\n")
+
+	if err := os.WriteFile(ExpensesCSVPath, content, 0644); err != nil {
+		t.Fatalf("failed to write malformed expenses CSV: %v", err)
+	}
+
+	if _, err := GetExpensesByUserID(1); err == nil {
+		t.Fatal("expected malformed expenses CSV error, got nil")
+	}
+}
+
+func TestFilterExpensesByDateSingleBound(t *testing.T) {
+	expenses := []Expense{
+		{ID: 1, ExpenseDate: "2025-06-01"},
+		{ID: 2, ExpenseDate: "2025-06-15"},
+		{ID: 3, ExpenseDate: "2025-07-01"},
+	}
+
+	tests := []struct {
+		name     string
+		dateFrom string
+		dateTo   string
+		wantLen  int
+	}{
+		{
+			name:     "date_from only",
+			dateFrom: "2025-06-15",
+			dateTo:   "",
+			wantLen:  2,
+		},
+		{
+			name:     "date_to only",
+			dateFrom: "",
+			dateTo:   "2025-06-15",
+			wantLen:  2,
+		},
+		{
+			name:     "no bounds",
+			dateFrom: "",
+			dateTo:   "",
+			wantLen:  3,
+		},
+	}
+
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			got, err := FilterExpensesByDate(expenses, testCase.dateFrom, testCase.dateTo)
+			if err != nil {
+				t.Fatalf("FilterExpensesByDate() error = %v", err)
+			}
+
+			if len(got) != testCase.wantLen {
+				t.Fatalf("len(got) = %d, want %d", len(got), testCase.wantLen)
+			}
+		})
+	}
+}

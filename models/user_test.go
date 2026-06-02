@@ -117,3 +117,18 @@ func TestUserLookupFailures(t *testing.T) {
 		})
 	}
 }
+
+func TestGetAllUsersMalformedCSV(t *testing.T) {
+	tempDir := t.TempDir()
+	UsersCSVPath = filepath.Join(tempDir, "users.csv")
+
+	content := []byte("id,name,email,password,created_at\n1,John Doe,john@example.com\n")
+
+	if err := os.WriteFile(UsersCSVPath, content, 0644); err != nil {
+		t.Fatalf("failed to write malformed users CSV: %v", err)
+	}
+
+	if _, err := GetAllUsers(); err == nil {
+		t.Fatal("expected malformed users CSV error, got nil")
+	}
+}
