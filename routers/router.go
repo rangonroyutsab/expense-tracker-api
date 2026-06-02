@@ -23,6 +23,10 @@ func init() {
 	beego.AddNamespace(ns)
 }
 
+// swaggerDocsNamespace exists only to help Bee generate Swagger docs from
+// controller @router annotations while keeping runtime routes defined with NSRouter.
+//
+// Do not call this function. Runtime routing is handled by init().
 func swaggerDocsNamespace() {
 	// bee generate docs only attaches controller annotations from NSInclude.
 	_ = beego.NewNamespace("/api/v1",
