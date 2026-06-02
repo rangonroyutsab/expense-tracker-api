@@ -23,7 +23,7 @@ type AuthController struct {
 // @Failure 400 {object} controllers.BasicResponse
 // @Failure 409 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /api/v1/auth/register [post]
+// @router /auth/register [post]
 func (c *AuthController) Register() {
 	var request RegisterRequest
 
@@ -89,7 +89,7 @@ func (c *AuthController) Register() {
 // @Failure 400 {object} controllers.BasicResponse
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /api/v1/auth/login [post]
+// @router /auth/login [post]
 func (c *AuthController) Login() {
 	var request LoginRequest
 
