@@ -395,7 +395,7 @@ Common error examples:
 ## Development Notes
 
 - Runtime routes are registered in `routers/router.go` with Beego namespaces.
-- The `swaggerDocsNamespace` helper exists only so Bee can generate docs from controller annotations.
+- Swagger route metadata is generated from the controller annotations.
 - `models.InitPaths()` loads CSV file paths from Beego config before files are initialized.
 - CSV records use incrementing integer IDs based on the maximum existing ID.
 - Amounts are written to CSV with two decimal places.
