@@ -25,7 +25,7 @@ type ExpenseController struct {
 // @Failure 400 {object} controllers.BasicResponse
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /expenses [post]
+// @router / [post]
 func (c *ExpenseController) CreateExpense() {
 	userID, err := c.GetCurrentUserID()
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *ExpenseController) CreateExpense() {
 // @Failure 400 {object} controllers.BasicResponse
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /expenses [get]
+// @router / [get]
 func (c *ExpenseController) ListExpenses() {
 	userID, err := c.GetCurrentUserID()
 	if err != nil {
@@ -118,7 +118,7 @@ func (c *ExpenseController) ListExpenses() {
 // @Failure 400 {object} controllers.BasicResponse
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 404 {object} controllers.BasicResponse
-// @router /expenses/:id [get]
+// @router /:id [get]
 func (c *ExpenseController) GetExpense() {
 	userID, err := c.GetCurrentUserID()
 	if err != nil {
@@ -151,7 +151,7 @@ func (c *ExpenseController) GetExpense() {
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 404 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /expenses/:id [put]
+// @router /:id [put]
 func (c *ExpenseController) UpdateExpense() {
 	userID, err := c.GetCurrentUserID()
 	if err != nil {
@@ -211,7 +211,7 @@ func (c *ExpenseController) UpdateExpense() {
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 404 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /expenses/:id [delete]
+// @router /:id [delete]
 func (c *ExpenseController) DeleteExpense() {
 	userID, err := c.GetCurrentUserID()
 	if err != nil {
@@ -249,7 +249,7 @@ func (c *ExpenseController) DeleteExpense() {
 // @Failure 400 {object} controllers.BasicResponse
 // @Failure 401 {object} controllers.BasicResponse
 // @Failure 500 {object} controllers.BasicResponse
-// @router /expenses/summary [get]
+// @router /summary [get]
 func (c *ExpenseController) Summary() {
 	userID, err := c.GetCurrentUserID()
 	if err != nil {

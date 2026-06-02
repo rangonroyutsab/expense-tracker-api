@@ -8,32 +8,30 @@ import (
 
 func init() {
 	ns := beego.NewNamespace("/api/v1",
-		beego.NSRouter("/health", &controllers.HealthController{}),
+		beego.NSNamespace("/health",
+			beego.NSInclude(
+				&controllers.HealthController{},
+			),
+			beego.NSRouter("", &controllers.HealthController{}),
+		),
 
 		beego.NSNamespace("/auth",
+			beego.NSInclude(
+				&controllers.AuthController{},
+			),
 			beego.NSRouter("/register", &controllers.AuthController{}, "post:Register"),
 			beego.NSRouter("/login", &controllers.AuthController{}, "post:Login"),
 		),
 
-		beego.NSRouter("/expenses", &controllers.ExpenseController{}, "post:CreateExpense;get:ListExpenses"),
-		beego.NSRouter("/expenses/summary", &controllers.ExpenseController{}, "get:Summary"),
-		beego.NSRouter("/expenses/:id", &controllers.ExpenseController{}, "get:GetExpense;put:UpdateExpense;delete:DeleteExpense"),
+		beego.NSNamespace("/expenses",
+			beego.NSInclude(
+				&controllers.ExpenseController{},
+			),
+			beego.NSRouter("", &controllers.ExpenseController{}, "post:CreateExpense;get:ListExpenses"),
+			beego.NSRouter("/summary", &controllers.ExpenseController{}, "get:Summary"),
+			beego.NSRouter("/:id", &controllers.ExpenseController{}, "get:GetExpense;put:UpdateExpense;delete:DeleteExpense"),
+		),
 	)
 
 	beego.AddNamespace(ns)
-}
-
-// swaggerDocsNamespace exists only to help Bee generate Swagger docs from
-// controller @router annotations while keeping runtime routes defined with NSRouter.
-//
-// Do not call this function. Runtime routing is handled by init().
-func swaggerDocsNamespace() {
-	// bee generate docs only attaches controller annotations from NSInclude.
-	_ = beego.NewNamespace("/api/v1",
-		beego.NSInclude(
-			&controllers.HealthController{},
-			&controllers.AuthController{},
-			&controllers.ExpenseController{},
-		),
-	)
 }

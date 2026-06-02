@@ -9,7 +9,7 @@ type HealthController struct {
 // @Title Health Check
 // @Description Check whether the API server is running.
 // @Success 200 {object} controllers.BasicResponse
-// @router /health [get]
+// @router / [get]
 func (c *HealthController) Get() {
 	c.Success(200, "Server is running", nil)
 }
